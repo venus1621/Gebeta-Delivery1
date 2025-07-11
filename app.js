@@ -23,12 +23,8 @@ const app = express();
 app.use(helmet());
 
 // 🌐 Enable CORS (Update `origin` as needed)
-app.use(cors({
-  origin: '*', // 🔁 CodeSandbox frontend
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
+app.use(cors());
+// app.options('*', cors());
 
 // 🛡️ Rate limiting
 const limiter = rateLimit({
@@ -44,13 +40,7 @@ app.use(mongoSanitize());
 app.use(xss());
 app.use(hpp());
 
-// 📝 Logger (only in dev)
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
-}
 
-// 📁 Static file serving
-app.use(express.static('public'));
 
 // 🚀 Routes
 app.use('/api/v1/foods', foodRoutes);
@@ -61,7 +51,8 @@ app.use('/api/v1/carts', cartRoutes);
 app.use('/api/v1/deliveries', deliverRoutes);
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/reviews', reviewRouter);
-app.use('/api/v1/restaurants/:restaurantId/reviews', reviewRouter);
+app.use('/api/v1/restaurants/:restaurantId/reviews', reviewRouter); // ✅
+
 
 // ✅ Health check
 app.get('/', (req, res) => {

@@ -20,7 +20,6 @@ const geocoder = NodeGeocoder({
   provider: 'openstreetmap'
 });
 
-
 export const getRestaurantsWithDistanceFromCoords = catchAsync(async (req, res, next) => {
   const { lng, lat } = req.query;
 
@@ -65,7 +64,7 @@ export const getRestaurantsWithDistanceFromCoords = catchAsync(async (req, res, 
 
   // Sort by nearest distance first
   const sorted = results.filter(r => r.distanceMeters !== null)
-  .sort((a, b) => a.distanceMeters - b.distanceMeters);
+                        .sort((a, b) => a.distanceMeters - b.distanceMeters);
 
   res.status(200).json({
     status: 'success',
@@ -73,7 +72,7 @@ export const getRestaurantsWithDistanceFromCoords = catchAsync(async (req, res, 
     data: sorted
   });
 });
-// Get all restaurants with filtering, sorting, pagination & search
+
 export const getAllRestaurants = catchAsync(async (req, res, next) => {
   const features = new APIFeatures(Restaurant.find(), req.query)
     .searchBy('name')
