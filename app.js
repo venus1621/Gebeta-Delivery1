@@ -15,7 +15,7 @@ import cors from 'cors';
 
 const app = express();
 app.use(cors({
-  origin: '*', // update to your frontend domain in production
+  origin: 'http://localhost:5174', // update to your frontend domain in production
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
    allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
