@@ -5,7 +5,11 @@ import APIFeatures from '../utils/apiFeatures.js';
 import User from '../models/userModel.js';
 import axios from 'axios';
 import NodeGeocoder from 'node-geocoder';
+import streamifier from 'streamifier';
+import cloudinary from '../utils/cloudinary.js';
+
 // Alias for top 5 rated restaurants
+
 export const aliasTopRestaurants = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingAverage,deliveryRadiusMeters';
@@ -61,7 +65,7 @@ export const getRestaurantsWithDistanceFromCoords = catchAsync(async (req, res, 
 
   // Sort by nearest distance first
   const sorted = results.filter(r => r.distanceMeters !== null)
-                        .sort((a, b) => a.distanceMeters - b.distanceMeters);
+  .sort((a, b) => a.distanceMeters - b.distanceMeters);
 
   res.status(200).json({
     status: 'success',
@@ -132,7 +136,35 @@ export const createRestaurant = catchAsync(async (req, res, next) => {
 
 // Update restaurant by ID
 export const updateRestaurant = catchAsync(async (req, res, next) => {
-  const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, {
+  const restaurantId = req.params.id;
+
+  // Upload image to Cloudinary if file is provided
+  if (req.file) {
+    const uploadFromBuffer = (fileBuffer) => {
+      return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            folder: 'restaurants',
+            transformation: [{ width: 800, height: 600, crop: 'limit' }, { quality: 60 }]
+          },
+          (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          }
+        );
+        streamifier.createReadStream(fileBuffer).pipe(stream);
+      });
+    };
+
+    try {
+      const uploadResult = await uploadFromBuffer(req.file.buffer);
+      req.body.imageCover = uploadResult.secure_url; // Save image URL in DB
+    } catch (err) {
+      return next(new AppError('Failed to upload image to Cloudinary', 500));
+    }
+  }
+
+  const restaurant = await Restaurant.findByIdAndUpdate(restaurantId, req.body, {
     new: true,
     runValidators: true
   });
@@ -146,6 +178,7 @@ export const updateRestaurant = catchAsync(async (req, res, next) => {
     data: { restaurant }
   });
 });
+
 
 // Delete restaurant by ID
 export const deleteRestaurant = catchAsync(async (req, res, next) => {
@@ -211,78 +244,3 @@ export const getRestaurantStats = catchAsync(async (req, res, next) => {
     data: { stats }
   });
 });
-
-
-
-
-
-
-
-
-
-
-
-// import Restaurant from '../models/Restaurant.js';
-
-// // CREATE a restaurant
-// export const createRestaurant = async (req, res) => {
-//   try {
-//     const restaurant = await Restaurant.create(req.body);
-//     res.status(201).json({ status: 'success', data: restaurant });
-//   } catch (err) {
-//     res.status(400).json({ status: 'fail', message: err.message });
-//   }
-// };
-
-// // READ all restaurants
-// export const getAllRestaurants = async (req, res) => {
-//   try {
-//     const restaurants = await Restaurant.find().populate('managerId');
-//     res.status(200).json({ status: 'success', results: restaurants.length, data: restaurants });
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ status: 'error', message: err.message });
-//   }
-// };
-
-// // READ one restaurant by ID
-// export const getRestaurant = async (req, res) => {
-//   try {
-//     const restaurant = await Restaurant.findById(req.params.id).populate('managerId');
-//     if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
-
-//     res.status(200).json({ status: 'success', data: restaurant });
-//   } catch (err) {
-//     res.status(500).json({ status: 'error', message: err.message });
-//   }
-// };
-
-// // UPDATE a restaurant
-// export const updateRestaurant = async (req, res) => {
-//   try {
-//     const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, {
-//       new: true,
-//       runValidators: true
-//     });
-//     if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
-
-//     res.status(200).json({ status: 'success', data: restaurant });
-//   } catch (err) {
-//     res.status(400).json({ status: 'fail', message: err.message });
-//   }
-// };
-
-// // DELETE a restaurant
-// export const deleteRestaurant = async (req, res) => {
-//   try {
-//     const restaurant = await Restaurant.findByIdAndDelete(req.params.id);
-//     if (!restaurant) return res.status(404).json({ message: 'Restaurant not found' });
-
-//     res.status(204).json({ status: 'success', data: null });
-//   } catch (err) {
-//     res.status(500).json({ status: 'error', message: err.message });
-//   }
-// };
-
-
-
