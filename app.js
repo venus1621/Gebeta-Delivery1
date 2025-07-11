@@ -14,11 +14,12 @@ import globalErrorHandler from './controllers/errorController.js';
 import cors from 'cors';
 
 const app = express();
-// app.use(cors({
-//   origin: 'http://localhost:3001', // update to your frontend domain in production
-//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-//   credentials: true
-// }));
+app.use(cors({
+  origin: '*', // update to your frontend domain in production
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+   allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 
 
 // Middleware
