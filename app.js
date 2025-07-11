@@ -74,7 +74,7 @@ app.get('/', (req, res) => {
 //   next(error);
 // });
 
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 export default app;
 // app.use(globalErrorHandler);
