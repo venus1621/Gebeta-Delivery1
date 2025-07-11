@@ -24,7 +24,7 @@ app.use(helmet());
 
 // 🌐 Enable CORS (Update `origin` as needed)
 app.use(cors({
-  origin: 'https://v0-backend-login-page.vercel.app', // 🔁 CodeSandbox frontend
+  origin: '*', // 🔁 CodeSandbox frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
@@ -77,6 +77,6 @@ app.get('/', (req, res) => {
 // });
 
 // 🔧 Global error handler
-app.use(globalErrorHandler);
+// app.use(globalErrorHandler);
 
 export default app;
