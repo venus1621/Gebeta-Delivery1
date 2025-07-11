@@ -24,7 +24,7 @@ app.use(helmet());
 
 // 🌐 Enable CORS (Update `origin` as needed)
 app.use(cors({
-  origin: 'https://kvhk98.csb.app', // 🔁 CodeSandbox frontend
+  origin: 'https://v0-backend-login-page.vercel.app', // 🔁 CodeSandbox frontend
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
