@@ -18,12 +18,12 @@ import reviewRouter from './routes/reviewRoutes.js';
 import globalErrorHandler from './controllers/errorController.js';
 
 const app = express();
-
+app.use(cors());
 // 🔐 Set security headers
 app.use(helmet());
 
 // 🌐 Enable CORS (Update `origin` as needed)
-app.use(cors());
+
 // app.options('*', cors());
 
 // 🛡️ Rate limiting
