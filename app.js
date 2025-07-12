@@ -23,7 +23,6 @@ app.use(cors());
 app.use(helmet());
 
 // 🌐 Enable CORS (Update `origin` as needed)
-
 // app.options('*', cors());
 
 // 🛡️ Rate limiting
@@ -32,7 +31,7 @@ const limiter = rateLimit({
   windowMs: 60 * 60 * 1000,
   message: 'Too many requests from this IP, please try again in an hour!'
 });
-app.use('/api', limiter);
+// app.use('/api', limiter);
 
 // 🧼 Body parser & sanitization
 app.use(express.json({ limit: '10kb' }));
